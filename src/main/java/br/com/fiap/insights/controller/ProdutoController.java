@@ -1,11 +1,13 @@
 package br.com.fiap.insights.controller;
 
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.NO_CONTENT;   
-
+import java.awt.print.Pageable;
 import java.util.List;
 
+import br.com.fiap.insights.dto.produto.AtualizarProduto;
+import br.com.fiap.insights.dto.produto.CadastrarProduto;
+import br.com.fiap.insights.dto.produto.DetalhesProduto;
+import br.com.fiap.insights.dto.produto.ListagemProduto;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,14 +17,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import br.com.fiap.insights.model.Produto;
 import br.com.fiap.insights.repository.ProdutoRepository;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("produto")
@@ -30,54 +31,48 @@ import lombok.extern.slf4j.Slf4j;
 public class ProdutoController {
 
     @Autowired
-    ProdutoRepository repository;
-
-    @GetMapping
-    public List<Produto> index() {
-        return repository.findAll();
-    }
+    ProdutoRepository produtoRepository;
 
     @PostMapping
-    @ResponseStatus(CREATED)
-    public Produto create(@RequestBody @Valid Produto produto) {
-        log.info("cadastrando produto: {}", produto);
-        return repository.save(produto);
+    @Transactional
+    public ResponseEntity<DetalhesProduto> post(@RequestBody @Valid CadastrarProduto dto,
+                                                UriComponentsBuilder uriBuilder) {
+        var produto = new Produto (dto);
+        produtoRepository.save(produto);
+        var uri = uriBuilder.path("/produto/{id}").buildAndExpand(produto.getId()).toUri();
+        return ResponseEntity.created(uri).body(new DetalhesProduto(produto));
+
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<Produto> show( @PathVariable Long id){
-        log.info("buscando produto com id {}", id);
-
-        return repository
-                    .findById(id)
-                    .map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build()); 
-    }   
-
     @DeleteMapping("{id}")
-    @ResponseStatus(NO_CONTENT)
-    public void destroy(@PathVariable Long id) {
-        log.info("Apagando produto {}", id);
-        verificarSeExisteProduto(id);
-        repository.deleteById(id);
+    @Transactional
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
+        produtoRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+
     }
 
 
     @PutMapping("{id}")
-    public Produto update(@PathVariable Long id, @RequestBody Produto produto){
-        log.info("atualizando produto com id {} para {}", id, produto);
+    @Transactional
+    public ResponseEntity<DetalhesProduto> put(@PathVariable("id") Long id,
+                                               @RequestBody AtualizarProduto dto) {
+        var produto = produtoRepository.getReferenceById(id);
+        produto.atualizarProduto(dto);
+        return ResponseEntity.ok(new DetalhesProduto(produto));
 
-        verificarSeExisteProduto(id);
-        produto.setId(id);
-        return repository.save(produto);
     }
 
-    private void verificarSeExisteProduto(Long id){
-        repository
-            .findById(id)
-            .orElseThrow(() -> new ResponseStatusException(
-                                    NOT_FOUND,
-                                    "id do produto não encontrado"
-                                    ));
+    @GetMapping("{id}")
+    public ResponseEntity<DetalhesProduto> get(@PathVariable("id") Long id) {
+        var produto = produtoRepository.getReferenceById(id);
+        return ResponseEntity.ok(new DetalhesProduto(produto));
+
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ListagemProduto>> get(Pageable pageable) {
+        var ListaDto = produtoRepository.findAll().stream().map(ListagemProduto::new).toList();
+        return ResponseEntity.ok(ListaDto);
     }
 }

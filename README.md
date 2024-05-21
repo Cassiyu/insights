@@ -16,15 +16,16 @@ API do Projeto DaVinci Insights - Processamento de dados para análise de feedba
 
 ## Competência 
 
-- Allef - Mastering Relational AND Non-Relational DataBase
+- Allef - Java Advanced
 
-- Cassio Y.H. Sakai - Mobile Application Development e Java Advanced
+- Cassio Y.H. Sakai - Mobile Application Development
 
 - Debora D. Lopes - Advanced Business Development With .NET e Disruptive Architectures: IOT, IOB & GENERATIVE IA 
 
-- Paulo B. Neto - Java Advanced
+- Paulo B. Neto - Mastering Relational AND Non-Relational DataBase
 
 - Yasmin A. S. Lopes- Compliance, Quality Assurance & Tests e DevOps Tools & Cloud Computing
+
 
 ## Objetivo do Projeto
 
@@ -35,10 +36,20 @@ O Público-alvo do Projeto DaVinci Insights visa atender empresas que buscam apr
 ## Pitch Projeto
 <p align="center"> <a href="https://www.canva.com/design/DAGCM51NRec/lrD6jDrLBVs0VjEa9xFJGw/view?utm_content=DAGCM51NRec&utm_campaign=designshare&utm_medium=link&utm_source=recording_view">Vídeo PITCH de apresentação do projeto</a></p>
 
-## Repositório: 
+## Repositório:
+
 ```bash
 git clone https://github.com/Cassiyu/insights
 ```
+
+## Atualizações
+
+- Controllers Refeitos.
+
+- Relacionamentos Adicionados.
+
+- Ligação com o Banco de Dados.
+
 
 ## Requisitos
 
@@ -90,14 +101,14 @@ git clone https://github.com/Cassiyu/insights
 
 ### Listar Opniões
 
-`GET`/opniao : Retorna o comentario do cliente sobre o Produto
+`GET`/opiniao : Retorna o comentario do cliente sobre o Produto
 
 #### Exemplo de Resposta
 
 ```js
 [
     {
-        "id": 1,
+        "id": 53,
         "comentario": "Excelente tecido!"
     }
 ]
@@ -183,21 +194,21 @@ Cadastre um cliente com os dados enviados no corpo da requisição.
 
 ### Cadastrar Opnião
 
-`POST` /opniao
+`POST` /opiniao
 
-Cadastre uma opnião com os dados enviados no corpo da requisição.
+Cadastre uma opinião com os dados enviados no corpo da requisição.
 
 #### Corpo da Requisição
 
 |campo|tipo|obrigatório|descrição
 |-----|----|:-----------:|---------
-|comentario|String|✅| Opnião do Cliente
+|comentario|String|✅| Opinião do Cliente
 
 ---
 
 #### Exemplo de Requisição
 ```js
-// Post /opniao
+// Post /opiniao
     {
         "comentario": "Excelente tecido!"
     }
@@ -237,7 +248,7 @@ Cadastre um produto com os dados enviados no corpo da requisição.
 
 #### Exemplo de Requisição
 ```js
-// Post /opniao
+// Post /produto
     {
         "nome": "Camisa",
         "valor": 29.90
@@ -290,15 +301,15 @@ Retorna os detalhes do cliente com o `id` informado no path.
 
 ### Detalhar Opnião
 
-`GET` /opniao/`{id}`
+`GET` /opiniao/`{id}`
 
-Retorna os detalhes da opnião com o `id` informado no path.
+Retorna os detalhes da opinião com o `id` informado no path.
 
 #### Exemplo de Resposta
 ```js
-// GET /opniao/1
+// GET /opiniao/53
 {
-    "id": 1,
+    "id": 53,
     "comentario": "Excelente tecido!"
 }
 ```

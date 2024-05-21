@@ -2,25 +2,49 @@ package br.com.fiap.insights.model;
 
 import java.math.BigDecimal;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import br.com.fiap.insights.dto.produto.AtualizarProduto;
+import br.com.fiap.insights.dto.produto.CadastrarProduto;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Data
 @Entity
+@Getter@Setter
+@NoArgsConstructor
+@Table(name="PRODUTO")
 public class Produto {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    @GeneratedValue
+    @Column(name="produto_id")
     private Long id;
 
-    @NotBlank
+
+    @Column(name="nome")
     private String nome;
-    
-    @NotNull
+
+    @Column(name="valor")
     private BigDecimal valor;
+
+    @ManyToOne
+    @JoinColumn(name="id_cliente")
+    private Cliente cliente;
+
+    public Produto(CadastrarProduto dto){
+        nome = dto.nome();
+        valor = dto.valor();
+
+    }
+
+
+    public void atualizarProduto(AtualizarProduto dto){
+        if (dto.nome() !=null)
+            nome = dto.nome();
+        if (dto.valor() !=null)
+            valor = dto.valor();
+    }
 
 }
